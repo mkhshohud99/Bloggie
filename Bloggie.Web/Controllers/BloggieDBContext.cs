@@ -1,4 +1,4 @@
-﻿namespace Bloggie.Controllers
+﻿namespace Bloggie.Web.Controllers
 {
     public class BloggieDBContext
     {
