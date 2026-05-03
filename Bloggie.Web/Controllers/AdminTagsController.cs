@@ -1,29 +1,30 @@
-﻿using Bloggie.Web.Data;
-using Bloggie.Web.Models.Domain;
+﻿using Bloggie.Web.Models.Domain;
 using Bloggie.Web.Models.ViewModels;
+using Bloggie.Web.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bloggie.Web.Controllers
 {
     public class AdminTagsController : Controller
     {
-        private readonly BloggieDbContext bloggieDbContext;
-        private object bloggieDbContextl;
+        private readonly ITagRepository tagRepository;
 
-        public AdminTagsController(BloggieDbContext bloggieDbContext)
+        public AdminTagsController(ITagRepository tagRepository)
         {
-            this.bloggieDbContext = bloggieDbContext;
+            this.tagRepository = tagRepository;
         }
 
+        // GET: Add
         [HttpGet]
         public IActionResult Add()
         {
             return View();
         }
 
+        // POST: Add
         [HttpPost]
         [ActionName("Add")]
-        public IActionResult Add(AddTagRequest addTagRequest)
+        public async Task<IActionResult> Add(AddTagRequest addTagRequest)
         {
             if (!ModelState.IsValid)
             {
@@ -36,26 +37,24 @@ namespace Bloggie.Web.Controllers
                 DisplayName = addTagRequest.DisplayName
             };
 
-            bloggieDbContext.Tags.Add(tag);
-            bloggieDbContext.SaveChanges();
+            await tagRepository.AddTagAsync(tag);
 
             return RedirectToAction("List");
         }
 
+        // GET: List
         [HttpGet]
-        public IActionResult List()
+        public async Task<IActionResult> List()
         {
-            var tags = bloggieDbContext.Tags.ToList();
+            var tags = await tagRepository.GetAllAsync();
             return View(tags);
         }
 
-        // =========================
         // GET: Edit
-        // =========================
         [HttpGet]
-        public IActionResult Edit(Guid id)
+        public async Task<IActionResult> Edit(int id)
         {
-            var tag = bloggieDbContext.Tags.FirstOrDefault(x => x.Id == id);
+            var tag = await tagRepository.GetTagAsync(id);
 
             if (tag == null)
             {
@@ -72,35 +71,46 @@ namespace Bloggie.Web.Controllers
             return View(model);
         }
 
-        // =========================
-        // POST: Edit  (FIXED)
-        // =========================
+        // POST: Edit ✅ FIXED
         [HttpPost]
         [ActionName("Edit")]
-        public IActionResult Edit(EditTagRequest editTagRequest)
+        public async Task<IActionResult> Edit(EditTagRequest editTagRequest)
         {
-            var existingTag = bloggieDbContext.Tags.Find(editTagRequest.Id);
-
-            if (existingTag != null)
+            if (!ModelState.IsValid)
             {
-                existingTag.Name = editTagRequest.Name;
-                existingTag.DisplayName = editTagRequest.DisplayName;
+                return View(editTagRequest);
+            }
 
-                bloggieDbContext.SaveChanges();
+            var tag = new Tag
+            {
+                Id = editTagRequest.Id,
+                Name = editTagRequest.Name,
+                DisplayName = editTagRequest.DisplayName
+            };
+
+            var updatedTag = await tagRepository.UpdateTagAsync(tag);
+
+            if (updatedTag != null)
+            {
+                // success
+            }
+            else
+            {
+                // error
             }
 
             return RedirectToAction("List");
         }
 
+        // POST: Delete
         [HttpPost]
-        public IActionResult Delete(Guid id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var tag = bloggieDbContext.Tags.Find(id);
+            var deletedTag = await tagRepository.DeleteTagAsync(id);
 
-            if (tag != null)
+            if (deletedTag != null)
             {
-                bloggieDbContext.Tags.Remove(tag);
-                bloggieDbContext.SaveChanges();
+                return RedirectToAction("List");
             }
 
             return RedirectToAction("List");

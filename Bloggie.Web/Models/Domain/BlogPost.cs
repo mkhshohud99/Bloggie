@@ -2,7 +2,7 @@
 {
     public class BlogPost
     {
-        public Guid Id { get; set; }
+        public int Id { get; set; }
 
         public String Heading { get; set; }
 

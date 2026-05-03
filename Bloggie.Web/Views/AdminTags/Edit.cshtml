@@ -9,6 +9,9 @@
     </div>
 
     <div class="container py-2">
+
+    @if(Model != null)
+    {
         <form method="post">
             <div class="mb-3">
                 <label class="form-label">Id</label>
@@ -26,9 +29,15 @@
 
             <div class="mb-3">
                 <button type="submit" class="btn btn-dark">Update</button>
-            <button type="submit" asp-area="" asp-controller="AdminTags" asp-action="Delete" class="btn btn-danger">Delete</button>
+                <button type="submit" asp-area="" asp-controller="AdminTags" asp-action="Delete" class="btn btn-danger">Delete</button>
             </div>
 
         </form>
+    }else
+    {
+        <p>Tag not found.</p>
+    }
+
+        
 
     </div>
