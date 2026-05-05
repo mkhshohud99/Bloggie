@@ -39,6 +39,17 @@ namespace Bloggie.Web.Repositories
             return await bloggieDbContext.Tags.ToListAsync();
         }
 
+        public async Task<Tag?> GetAsync(int id)
+        {
+            return await bloggieDbContext.Tags
+                .FirstOrDefaultAsync(x => x.Id == id);
+        }
+
+        public Task GetAsync(Guid guid)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<Tag?> GetTagAsync(int id) // ✅ nullable
         {
             return await bloggieDbContext.Tags.FirstOrDefaultAsync(x => x.Id == id);

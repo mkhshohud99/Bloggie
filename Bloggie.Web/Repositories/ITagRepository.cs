@@ -12,5 +12,7 @@ namespace Bloggie.Web.Repositories
         Task<Tag?> UpdateTagAsync(Tag tag);
 
         Task<Tag?> DeleteTagAsync(int id);
+        Task GetAsync(Guid guid);
+        Task<Tag> GetAsync(int v);
     }
 }

@@ -1,0 +1,32 @@
+﻿@model Bloggie.Web.Models.ViewModels.AddBlogPostRequest
+
+<div class="container py-4">
+    <form method="post" asp-action="Add">
+
+        <div asp-validation-summary="All" class="text-danger"></div>
+
+        <input asp-for="Heading" class="form-control mb-2" placeholder="Heading" />
+        <input asp-for="PageTitle" class="form-control mb-2" placeholder="Page Title" />
+        <textarea asp-for="Contant" class="form-control mb-2"></textarea>
+
+        <input asp-for="ShortDescription" class="form-control mb-2" placeholder="Short Description" />
+        <input asp-for="FeaturedImageUrl" class="form-control mb-2" placeholder="Image URL" />
+        <input asp-for="UrlHandle" class="form-control mb-2" placeholder="Url Handle" />
+
+        <input asp-for="PublishedDate" type="date" class="form-control mb-2" />
+        <input asp-for="Author" class="form-control mb-2" placeholder="Author" />
+
+        <div class="form-check mb-2">
+            <input asp-for="Visible" class="form-check-input" />
+            <label class="form-check-label">Visible</label>
+        </div>
+
+        <select asp-for="SelectedTags"
+                asp-items="Model.Tags"
+                multiple
+                class="form-control mb-3">
+        </select>
+
+        <button type="submit" class="btn btn-primary">Save</button>
+    </form>
+</div>

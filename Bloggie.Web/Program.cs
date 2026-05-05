@@ -14,6 +14,7 @@ builder.Services.AddDbContext<BloggieDbContext>(options =>
     ));
 
 // ✅ FIX: Register Interface → Implementation
+builder.Services.AddScoped<IBlogPostRepository, BlogPostRepository>();
 builder.Services.AddScoped<ITagRepository, TagRepository>();
 
 var app = builder.Build();
