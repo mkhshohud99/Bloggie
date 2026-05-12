@@ -36,7 +36,7 @@ app.UseAuthorization();
 // ✅ Optional: set your default page (your tags list)
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=AdminTags}/{action=List}/{id?}"
+    pattern: "{controller=AdminBlogPosts}/{action=Report}/{id?}"
 );
 
 app.Run();

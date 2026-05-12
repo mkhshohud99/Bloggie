@@ -24,6 +24,7 @@
 
         public bool Visible { get; set; }
 
+        //Navigation Property
         public ICollection<Tag> Tags { get; set; }
 
     }

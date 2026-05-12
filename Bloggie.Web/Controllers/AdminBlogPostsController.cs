@@ -89,5 +89,103 @@ namespace Bloggie.Web.Controllers
 
             return RedirectToAction("Add");
         }
+
+        public async Task<IActionResult> List()
+        {
+            //call the repository to get all blog posts from the database
+            var blogPost = await blogPostRepository.GetAllAsync();
+
+            
+            return View(blogPost);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var blogPost = await blogPostRepository.GetAsync(id);
+
+            if (blogPost == null)
+            {
+                return NotFound();   // easier to debug
+            }
+
+            var tags = await tagRepository.GetAllAsync();
+
+            var model = new EditBlogPostRequest
+            {
+                Id = blogPost.Id,
+                Heading = blogPost.Heading,
+                PageTitle = blogPost.PageTitle,
+                Content = blogPost.Contant,
+                ShortDescription = blogPost.ShortDescription,
+                FeaturedImageUrl = blogPost.FeaturedImageUrl,
+                PublishedDate = blogPost.PublishedDate,
+                UrlHandle = blogPost.UrlHandle,
+                Author = blogPost.Author,
+                Visible = blogPost.Visible,
+                Tags = tags.Select(x => new SelectListItem
+                {
+                    Text = x.DisplayName,
+                    Value = x.Id.ToString()
+                }),
+                SelectedTags = blogPost.Tags
+                                .Select(x => x.Id.ToString())
+                                .ToList()
+            };
+
+            return View(model);
+        }
+        [HttpGet]
+        public async Task<IActionResult> Report(
+        string? authorName,
+        DateTime? fromDate,
+        DateTime? toDate)
+        {
+            var blogPosts = await blogPostRepository.GetAllAsync();
+
+            // Filter by author
+            if (!string.IsNullOrWhiteSpace(authorName))
+            {
+                blogPosts = blogPosts
+                    .Where(x => x.Author.Contains(authorName))
+                    .ToList();
+            }
+
+            // Filter by from date
+            if (fromDate.HasValue)
+            {
+                blogPosts = blogPosts
+                    .Where(x => x.PublishedDate >= fromDate.Value)
+                    .ToList();
+            }
+
+            // Filter by to date
+            if (toDate.HasValue)
+            {
+                blogPosts = blogPosts
+                    .Where(x => x.PublishedDate <= toDate.Value)
+                    .ToList();
+            }
+
+            var reports = blogPosts
+                .GroupBy(x => x.Author)
+                .Select(x => new AuthorPostReport
+                {
+                    Author = x.Key,
+                    TotalPosts = x.Count()
+                })
+                .OrderByDescending(x => x.TotalPosts)
+                .ToList();
+
+            var model = new AuthorPostReportRequest
+            {
+                AuthorName = authorName,
+                FromDate = fromDate,
+                ToDate = toDate,
+                Reports = reports
+            };
+
+            return View(model);
+        }
     }
 }

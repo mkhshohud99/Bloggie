@@ -1,0 +1,167 @@
+﻿@model Bloggie.Web.Models.ViewModels.AuthorPostReportRequest
+
+@{
+    ViewData["Title"] = "Author Report";
+}
+
+<style>
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        table th,
+        table td {
+            padding: 12px;
+            border: 1px solid #dee2e6;
+        }
+
+        table th {
+            background-color: #f8f9fa;
+        }
+
+    /* PRINT STYLING */
+   @@media print {
+
+        .no-print {
+            display: none !important;
+        }
+
+        body {
+            margin: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid black;
+        }
+
+        th,
+        td {
+            padding: 10px;
+        }
+
+        .navbar {
+            display: none !important;
+        }
+
+        h1 {
+            text-align: center;
+        }
+    }
+
+</style>
+
+<div class="bg-secondary bg-opacity-10 py-3 mb-4">
+    <div class="container">
+        <h1>All Author Total Post Count Report</h1>
+    </div>
+</div>
+
+<div class="container py-4">
+
+    <!-- FILTER FORM -->
+    <form method="get" class="no-print">
+
+        <div class="row mb-4">
+
+            <!-- AUTHOR -->
+            <div class="col-md-3">
+                <label class="form-label">Author</label>
+
+                <input type="text"
+                       name="authorName"
+                       value="@Model.AuthorName"
+                       class="form-control"
+                       placeholder="Enter author name" />
+            </div>
+
+            <!-- FROM DATE -->
+            <div class="col-md-3">
+                <label class="form-label">From Date</label>
+
+                <input type="date"
+                       name="fromDate"
+                       value="@Model.FromDate?.ToString("yyyy-MM-dd")"
+                       class="form-control" />
+            </div>
+
+            <!-- TO DATE -->
+            <div class="col-md-3">
+                <label class="form-label">To Date</label>
+
+                <input type="date"
+                       name="toDate"
+                       value="@Model.ToDate?.ToString("yyyy-MM-dd")"
+                       class="form-control" />
+            </div>
+
+            <!-- BUTTONS -->
+            <div class="col-md-3 d-flex align-items-end gap-2">
+
+                <button type="submit"
+                        class="btn btn-primary">
+                    Filter
+                </button>
+
+                <button type="button"
+                        onclick="window.print()"
+                        class="btn btn-success">
+                    Print Report
+                </button>
+
+            </div>
+
+        </div>
+
+    </form>
+
+    <!-- REPORT INFO -->
+    <div class="mb-3">
+        <strong>Printed On:</strong>
+        @DateTime.Now.ToString("dd MMM yyyy hh:mm tt")
+    </div>
+
+    <!-- REPORT TABLE -->
+    <table class="table table-bordered">
+
+        <thead>
+            <tr>
+                <th>Author</th>
+                <th>Total Posts</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            @if (Model.Reports != null && Model.Reports.Any())
+            {
+                @foreach (var item in Model.Reports)
+                {
+                    <tr>
+                        <td>@item.Author</td>
+                        <td>@item.TotalPosts</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="2" class="text-center">
+                        No Records Found
+                    </td>
+                </tr>
+            }
+
+        </tbody>
+
+    </table>
+
+</div>
